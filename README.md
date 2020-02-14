@@ -30,16 +30,16 @@
 - 访问限制级别一定不能比重写方法的高
 - 异常只能更小
 
-###八个基础数据类型
+### 八个基础数据类型
 > byte short int long float double char boolean
 
 > float 范围：1.4e-45 ～ 3.4e+38 && -3.4e+38 ～ -1.4e-45
 double 范围：4.9e-324 ～ 1.798e+308  && -1.798e+308 ～ -4.9e-324
 
-###Object类的方法
+### Object类的方法
 > getClass clone toString finalize equals hashcode wait notify notifyAll
 
-###抽象类和接口
+### 抽象类和接口
 - 区别：
 		抽象类中可以没有抽象方法，也可以普通方法和抽象方法共存
 		接口中的方法在 JDK8 之前只能是抽象的，在 JDK8 之后提供了 default 实现普通方法
@@ -47,7 +47,7 @@ double 范围：4.9e-324 ～ 1.798e+308  && -1.798e+308 ～ -4.9e-324
 		抽象类中可以存在普通的成员变量，接口中只允许出现常量，必须是 staitc final 类型且必须被初始化
 		抽象类中可以有构造方法，但不能直接调用，接口中不能有构造方法
 
-###关键字
+### 关键字
 - transient
 > 
 		只要这个类实现了 serializable 接口，这个类的所有方法和属性都会自动序列化
@@ -55,7 +55,7 @@ double 范围：4.9e-324 ～ 1.798e+308  && -1.798e+308 ～ -4.9e-324
 		只能修饰变量，不能修饰方法和类
 		一个静态变量不管是否被 transient 修饰，均不会被序列化
 
-###集合类
+### 集合类
 
 - ArrayLIst 和 LinkedList Vector 区别
 > ArrayList 是一个大小可变的动态数组
@@ -75,7 +75,7 @@ HashTable 的键和值都不允许为 null ，HashMap 中 null 可以为键，�
 HashSet 基本操作都是 HashMap 实现的，也是用 HashMap 存储数据，利用 hashcode 和 equals 方法判断重复
 TreeSet 是基于红黑树实现的，用 compareTo 方法来判断重复
 
-###IO
+### IO
 - 同步/异步 阻塞/非阻塞
 > 同步/异步是描述被调用方的，阻塞/非阻塞是描述调用方的
 
@@ -86,13 +86,13 @@ TreeSet 是基于红黑树实现的，用 compareTo 方法来判断重复
 		信号驱动 IO 模型
 		异步 IO 模型
 
-###反射
+### 反射
 > 指程序在运行时可以获取自身的信息
 
 - Class 类
 虚拟机为每种类型管理一个独一无二的 Class 对象。也就是说每个类型都有一个 Class 对象。运行程序时，Java虚拟机(JVM)首先检查是否所要加载的类对应的Class对象是否已经加载。如果没有加载，JVM就会根据类名查找.class文件，并将其Class对象载入。
 
-###代理
+### 代理
 - 静态代理
 在编译期间就确定好了
 
