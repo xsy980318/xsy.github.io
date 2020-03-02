@@ -158,6 +158,55 @@ ThreadLocal 通常用于同一个线程内，跨类、跨方法传递数据。�
 	 可以用于遗传算法，也可用于校对工作
 
 
+### ConcurrentHashMap
+- 1.7 和 1.8 区别
+	 - 1.7 采用 Segment + HashEntry 的方式进行实现，Segment 数组的意义就是将一个大的 table 分割成多个小的 table 来进行加锁，而每一个 Segment 元素存储的是 HashEntry 数组 + 链表， Segment 是一种可重入锁，继承了 ReentrantLock
+	 - 1.8 采用 Synchronized + CAS + Node + Unsafe 实现，取消了 Segment 字段，数组中存储的就是Node 。它对 value 和 next 属性设置了 volatile 同步锁，它不允许调用 setValue 方法直接改变 Node 的value 域
+
+- 1.7 put 操作
+	 先定位到 segment ，判断是否需要扩容，concurrnetHashMap 不会对整个容器进行扩容，而只对某个 segment 进行扩容，定位添加元素的位置，然后将其放进 HashEntry 中
+
+- 1.7 get 操作
+	 在 get 过程中并不需要加锁，除非读到的值是空才会加锁重读，在 get 方法中将需要用到的共享变量全部定义成 volatile 类型
+
+- 1.7 size 操作
+	 先尝试两次通过不锁住 segment 的方式来统计各个 segment 的大小，如果统计的过程中，容器的count 发生变化，则再采用加锁的方式统计所有 segment 的大小。使用 modcount 变量判断是否发生了变化
+
+- 1.8 put 操作
+	 如果相应位置的Node还未初始化，则通过CAS插入相应的数据；如果相应位置的 Node 不为空，且当前该节点不处于移动状态，则对该节点加 synchronized 锁
+
+- 1.8 size 操作
+	 用一个 volatile 类型的变量 baseCount 记录元素的个数，当插入新数据或则删除数据时，会通过addCount() 方法更新 baseCount。部分元素的变化个数保存在CounterCell数组中，通过累加baseCount和CounterCell数组中的数量，即可得到元素的总个数
+
+**JAVA8的ConcurrentHashMap为什么放弃了分段锁？**
+	 加入多个分段锁浪费内存空间，很臃肿
+	 生产环境中， map 在放入时竞争同一个锁的概率非常小，分段锁反而会造成更新等操作的长时间等待
+	 为了提高 GC 的效率
+
+
+**ConcurrentHashMap(JDK1.8)为什么要使用synchronized而不是如ReentranLock这样的可重入锁**
+	 减少内存开销 假设使用可重入锁来获得同步支持，那么每个节点都需要通过继承AQS来获得同步支持。但并不是每个节点都需要获得同步支持的，只有链表的头节点（红黑树的根节点）需要同步，这无疑带来了巨大内存浪费
+	 获得JVM的支持 可重入锁毕竟是API这个级别的，后续的性能优化空间很小。 synchronized则是JVM直接支持的
+
+### 红黑树
+	 和AVL数类似，都是在进行插入和删除元素时，通过特定的旋转来保持自身平衡，从而获得较高的查找性能
+	 与AVL树相比，红黑树并不追求所有递归子树的高度差不超过1，而是保证从根节点到叶子节点的最长路径不超过最短路径的2倍，所以他的最坏运行时间也是O(longN)
+	 在插入时，红黑树和AVL树都能在至多两次旋转内恢复平衡；在删除时，红黑树能在至多三次旋转内恢复平衡，AVL树至多需要logN次旋转
+	 面对频繁插入和删除，红黑树更为合适；面对大量查询，AVL树更加合适
+
+- 五个约束条件
+		 节点只能是红色或黑色
+		 根节点必须是黑色
+		 所有NIL节点都是黑色的
+		 一条路径下上不能出现相邻的两个红色节点
+		 在任何递归子树内，根节点到叶子节点的所有路径上包含想同数目的黑色节点
+
+
+
+
+
+
+
 
 
 
